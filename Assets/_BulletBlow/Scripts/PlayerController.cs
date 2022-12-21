@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     public event Action OnActionReload;
     public event Action OnActionTriggerBegin;
     public event Action OnActionTriggerEnd;
+    public LayerMask hitlayer;
     
     [SerializeField] private CharacterController controller = null;
     [SerializeField] private Transform head = null;
