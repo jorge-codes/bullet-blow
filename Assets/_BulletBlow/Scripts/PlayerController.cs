@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     
     [SerializeField] private CharacterController controller = null;
     [SerializeField] private Transform head = null;
+    [SerializeField] private WeaponController weaponController = null;
     
     [Space(30)]
     [SerializeField, Range(.1f, 20f)] private float characterSpeed = 3f;
@@ -24,7 +25,26 @@ public class PlayerController : MonoBehaviour
     private float vertSpeed;
     private int bulletsNow;
 
-    // Start is called before the first frame update
+    #region  Unity Methods
+
+    private void OnEnable()
+    {
+        if (weaponController != null)
+        {
+            OnActionTriggerBegin += weaponController.Shoot;
+            OnActionReload += weaponController.Reload;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (weaponController != null)
+        {
+            OnActionTriggerBegin -= weaponController.Shoot;
+            OnActionReload -= weaponController.Reload;
+        }
+    }
+
     void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
@@ -34,21 +54,31 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // ComputeSimpleMovement();
         ComputeMovementWithJump();
         
         ComputeRotation();
         
         ComputeActions();
-    }
+    }    
 
-    private void ComputeSimpleMovement()
-    {
-        // calculate translation
-        direction = GetMovementVector();
-        // apply and SimpleMove applies gravity directly
-        controller.SimpleMove(direction * characterSpeed);
-    }
+    #endregion
+
+    #region Public Methods
+
+    
+
+    #endregion
+
+
+    #region Private Methods
+
+    // private void ComputeSimpleMovement()
+    // {
+    //     // calculate translation
+    //     direction = GetMovementVector();
+    //     // apply and SimpleMove applies gravity directly
+    //     controller.SimpleMove(direction * characterSpeed);
+    // }
 
     private void ComputeMovementWithJump()
     {
@@ -62,7 +92,6 @@ public class PlayerController : MonoBehaviour
         {
             vertSpeed = groundControl;
         }
-
 
         // validate jump
         if (Input.GetButtonDown("Jump") && controller.isGrounded)
@@ -102,9 +131,12 @@ public class PlayerController : MonoBehaviour
             OnActionTriggerEnd?.Invoke();
         }
 
-        
+        if (Input.GetButtonDown("Fire2"))
+        {
+            OnActionReload?.Invoke();
+        }
     }
-    
+
 
     // private void ShootRay()
     // {
@@ -149,5 +181,8 @@ public class PlayerController : MonoBehaviour
         var vert = Input.GetAxis("Mouse Y") * sensitivity;
         return (hori, vert);
     }
+
+    #endregion
+    
     
 }
